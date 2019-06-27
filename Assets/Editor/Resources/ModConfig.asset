@@ -13,9 +13,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: freeParking
   title: Free Parking
-  description: "Free Parking 1.02\nFor the record, I agree with Bob\u2026\n\nModule
+  description: "Free Parking 1.03\nFor the record, I agree with Bob\u2026\n\nModule
     ID: freeParking\n\nCreated by: StKildaFan\nImplemented by: Royal_Flu$h\n\nManual
     available here: https://ktane.timwi.de/HTML/Free%20Parking.html"
-  version: 1.02
+  version: 1.03
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 9c1b5dd039f0640a58b27999744396a7, type: 3}
