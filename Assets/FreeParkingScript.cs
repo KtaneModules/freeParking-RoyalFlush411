@@ -289,10 +289,11 @@ public class FreeParkingScript : MonoBehaviour
             Debug.LogFormat("[Free Parking #{0}] Strike! You tried to pass GO! when you should be going to jail.", moduleId);
             GetComponent<KMBombModule>().HandleStrike();
             FreeParkingEtc();
+            return;
         }
-        if(baseMoneyInt > 5000)
+        moduloMoney = baseMoneyInt;
+        if (baseMoneyInt > 5000)
         {
-            moduloMoney = baseMoneyInt;
             baseMoneyInt = baseMoneyInt % 5000;
             Debug.LogFormat("[Free Parking #{0}] The value at submission was greater than $5000. Modulo 5000. The new value is ${1}.", moduleId, baseMoneyInt);
         }
