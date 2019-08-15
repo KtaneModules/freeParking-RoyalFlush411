@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -397,5 +398,68 @@ public class FreeParkingScript : MonoBehaviour
             paidMoney += pressedMoney.value;
             moneyStage++;
         }
+    }
+
+    // Twitch Plays implementation handled by Kaito Sinclaire (K_S_)
+#pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"Use '!{0} pay 1234' or '!{0} $1234' to pay the bomb, and '!{0} go to jail' to send it to jail.";
+#pragma warning restore 414
+
+    public IEnumerator ProcessTwitchCommand(string command)
+    {
+        Match mt;
+
+        // TP only silence command
+        if (Regex.IsMatch(command, @"^\s*go\s*to\s*jail\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            Debug.LogFormat("[Free Parking #{0}] TP Command: Sending the bomb to jail.", moduleId);
+
+            yield return null;
+            yield return new KMSelectable[] { tokenButton, jailButton };
+        }
+        else if ((mt = Regex.Match(command, @"^\s*(?:pay\s+\$?|\$)(\d+)\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
+        {
+            // If this matched, group 1 is the amount to pay
+            int amountToPay = Convert.ToInt32(mt.Groups[1].ToString());
+            if (amountToPay > 5000)
+                yield return "sendtochaterror The bank doesn't have enough money to pay that!";
+            else if (amountToPay == 0)
+            {
+                Debug.LogFormat("[Free Parking #{0}] TP Command: Paying the bomb nothing.", moduleId);
+                yield return null;
+                yield return new KMSelectable[] { tokenButton, goButton };
+            }
+            else
+            {
+                List<KMSelectable> pressList = new List<KMSelectable>();
+
+                Debug.LogFormat("[Free Parking #{0}] TP Command: Paying the bomb ${1}.", moduleId, amountToPay);
+                pressList.Add(tokenButton);
+
+                // NOTE: This makes the assumption that the money buttons are lowest to highest from left to right.
+                for (int i = startMoney.Length - 1; i >= 0; --i)
+                {
+                    while (amountToPay >= startMoney[i].value)
+                    {
+                        pressList.Add(startMoney[i].selectable);
+                        amountToPay -= startMoney[i].value;
+                    }
+                    if (amountToPay == 0)
+                        break;
+                }
+
+                if (amountToPay != 0)
+                    yield return "sendtochaterror For some reason, I couldn't pay that amount of money. This is probably a bug.";
+                else
+                {
+                    pressList.Add(goButton);
+                    yield return null;
+
+                    KMSelectable[] pressArray = pressList.ToArray();
+                    yield return pressArray;
+                }
+            }
+        }
+        yield break;
     }
 }
