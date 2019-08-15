@@ -409,7 +409,6 @@ public class FreeParkingScript : MonoBehaviour
     {
         Match mt;
 
-        // TP only silence command
         if (Regex.IsMatch(command, @"^\s*go\s*to\s*jail\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             Debug.LogFormat("[Free Parking #{0}] TP Command: Sending the bomb to jail.", moduleId);
