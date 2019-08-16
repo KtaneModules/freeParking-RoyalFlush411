@@ -419,7 +419,13 @@ public class FreeParkingScript : MonoBehaviour
         else if ((mt = Regex.Match(command, @"^\s*(?:pay\s+\$?|\$)(\d+)\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).Success)
         {
             // If this matched, group 1 is the amount to pay
-            int amountToPay = Convert.ToInt32(mt.Groups[1].ToString());
+            int amountToPay = int.MaxValue;
+
+            // I just know SOME dunce is going to try to pay an inordinately large amount of money.
+            // Probably me.
+            try { amountToPay = Convert.ToInt32(mt.Groups[1].ToString()); }
+            catch (OverflowException e) { /* NO-OP */ }
+
             if (amountToPay > 5000)
                 yield return "sendtochaterror The bank doesn't have enough money to pay that!";
             else if (amountToPay == 0)
